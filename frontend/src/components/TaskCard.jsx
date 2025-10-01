@@ -1,29 +1,45 @@
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, Calendar, Flag } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Pencil, Trash2, Calendar, Flag } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const TaskCard = ({ task, onEdit, onDelete, onStatusChange }) => {
-  const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
+  const isOverdue =
+    task.due_date &&
+    new Date(task.due_date) < new Date() &&
+    task.status !== "completed";
 
   const priorityColors = {
-    low: 'bg-priority-low/10 text-priority-low border-priority-low/20',
-    medium: 'bg-priority-medium/10 text-priority-medium border-priority-medium/20',
-    high: 'bg-priority-high/10 text-priority-high border-priority-high/20',
+    low: "bg-priority-low/10 text-priority-low border-priority-low/20",
+    medium:
+      "bg-priority-medium/10 text-priority-medium border-priority-medium/20",
+    high: "bg-priority-high/10 text-priority-high border-priority-high/20",
   };
 
   const statusColors = {
-    pending: 'bg-status-pending/10 text-status-pending border-status-pending/20',
-    'in-progress': 'bg-status-in-progress/10 text-status-in-progress border-status-in-progress/20',
-    completed: 'bg-status-completed/10 text-status-completed border-status-completed/20',
+    pending:
+      "bg-status-pending/10 text-status-pending border-status-pending/20",
+    "in-progress":
+      "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/20",
+    completed:
+      "bg-status-completed/10 text-status-completed border-status-completed/20",
+  };
+
+  const handleDragStart = (e) => {
+    const payload = JSON.stringify({ id: task.id, status: task.status });
+    e.dataTransfer.setData("application/json", payload);
+    e.dataTransfer.setData("text/plain", payload);
+    e.dataTransfer.effectAllowed = "move";
   };
 
   return (
     <Card
+      draggable
+      onDragStart={handleDragStart}
       className={cn(
-        'p-4 shadow-soft hover:shadow-medium transition-all cursor-pointer',
-        isOverdue && 'border-destructive/50 bg-destructive/5'
+        "p-4 shadow-soft hover:shadow-medium transition-all cursor-grab active:cursor-grabbing",
+        isOverdue && "border-destructive/50 bg-destructive/5"
       )}
     >
       <div className="space-y-3">
@@ -50,7 +66,9 @@ export const TaskCard = ({ task, onEdit, onDelete, onStatusChange }) => {
         </div>
 
         {task.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">{task.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {task.description}
+          </p>
         )}
 
         <div className="flex flex-wrap gap-2">
@@ -65,8 +83,9 @@ export const TaskCard = ({ task, onEdit, onDelete, onStatusChange }) => {
             <Badge
               variant="outline"
               className={cn(
-                'gap-1',
-                isOverdue && 'bg-destructive/10 text-destructive border-destructive/20'
+                "gap-1",
+                isOverdue &&
+                  "bg-destructive/10 text-destructive border-destructive/20"
               )}
             >
               <Calendar className="h-3 w-3" />
@@ -76,31 +95,31 @@ export const TaskCard = ({ task, onEdit, onDelete, onStatusChange }) => {
         </div>
 
         <div className="flex gap-2 pt-2">
-          {task.status !== 'pending' && (
+          {task.status !== "pending" && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onStatusChange(task.id, 'pending')}
+              onClick={() => onStatusChange(task.id, "pending")}
               className="text-xs"
             >
               Pending
             </Button>
           )}
-          {task.status !== 'in-progress' && (
+          {task.status !== "in-progress" && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onStatusChange(task.id, 'in-progress')}
+              onClick={() => onStatusChange(task.id, "in-progress")}
               className="text-xs"
             >
               In Progress
             </Button>
           )}
-          {task.status !== 'completed' && (
+          {task.status !== "completed" && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onStatusChange(task.id, 'completed')}
+              onClick={() => onStatusChange(task.id, "completed")}
               className="text-xs"
             >
               Complete
