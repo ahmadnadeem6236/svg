@@ -109,14 +109,34 @@ TEMPLATES = [
 
 ASGI_APPLICATION = "config.asgi.application"
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
-#         },
-#     },
-# }
+# Channels layer configuration
+# Prefer Redis in production; gracefully fall back to in-memory for local/dev
+try:
+    REDIS_URL = env("REDIS_URL", default=None)
+    if not REDIS_URL:
+        # Build from known Redis Cloud host if password is provided
+        redis_password = env("REDIS_PASWD", default=None)
+        if redis_password:
+            REDIS_URL = (
+                "redis://default:" + redis_password +
+                "@redis-15974.crce176.me-central-1-1.ec2.redns.redis-cloud.com:15974/0"
+            )
+
+    if REDIS_URL:
+        CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "channels_redis.core.RedisChannelLayer",
+                "CONFIG": {"hosts": [REDIS_URL]},
+            }
+        }
+    else:
+        CHANNEL_LAYERS = {
+            "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+        }
+except Exception:
+    CHANNEL_LAYERS = {
+        "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+    }
 try:
     r = redis.Redis(
         host="redis-15974.crce176.me-central-1-1.ec2.redns.redis-cloud.com",
