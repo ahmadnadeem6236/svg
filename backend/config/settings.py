@@ -34,7 +34,7 @@ SECRET_KEY = "django-insecure-v438zo1ufqe42he)rx7b5zr+&&@wpoow91i!ftksww64b#*36m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["taskflow-backend-lti2.onrender.com"]
 
 
 # Application definition
